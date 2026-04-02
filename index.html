@@ -19,7 +19,7 @@ header {
 .logo span { font-weight: 400; color: #888; font-size: 13px; margin-left: 8px; }
 .cache-status { font-size: 11px; color: #aaa; }
 .cache-status.ready { color: #2d7a4f; }
-main { max-width: 1600px; margin: 0 auto; padding: 1.5rem 2rem; }
+main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.75rem; }
 .card {
   background: #fff; border-radius: 14px; padding: 1.25rem;
   margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -75,7 +75,7 @@ textarea { resize: vertical; min-height: 150px; line-height: 1.65; }
 .result-wrap { overflow-x: visible; }
 table { width: 100%; border-collapse: collapse; font-size: 16px; min-width: 0; }
 thead th {
-  text-align: left; font-size: 11px; font-weight: 700; color: #666;
+  text-align: left; font-size: 13px; font-weight: 700; color: #444;
   letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 14px;
   border-bottom: 1px solid #f0f0ec; white-space: nowrap;
 }
@@ -85,8 +85,8 @@ thead .group-label {
   text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
   padding: 5px 10px; border-bottom: 1px solid #f0f0ec;
 }
-thead .group-label.left { background: #f8f8f6; color: #888; border-right: 2px solid #e0e0da; }
-thead .group-label.right { background: #fff; color: #333; font-size: 12px; }
+thead .group-label.left { background: #f8f8f6; color: #555; font-size: 12px; border-right: 2px solid #e0e0da; }
+thead .group-label.right { background: #fff; color: #222; font-size: 13px; font-weight: 700; }
 td {
   padding: 11px 14px; border-bottom: 1px solid #f8f8f6; vertical-align: middle;
 }
@@ -351,17 +351,17 @@ td.orig .inline-edit { color: #444; font-size: 14px; }
             <th colspan="6" class="group-label right">比對結果（可編輯）</th>
           </tr>
           <tr>
-            <th class="group-left" style="width:90px;">客戶編號</th>
-            <th class="group-left" style="min-width:140px;">客戶品項</th>
-            <th class="group-left" style="width:60px;">數量</th>
-            <th class="group-left" style="width:60px;">單位</th>
-            <th class="group-left group-sep" style="min-width:120px;">客戶備註</th>
-            <th class="group-right" style="min-width:160px;">正式品名</th>
-            <th class="group-right" style="width:90px;">換算數量</th>
-            <th class="group-right" style="width:80px;">換算單位</th>
-            <th class="group-right" style="min-width:150px;">備註</th>
-            <th class="group-right" style="min-width:100px;">狀態</th>
-            <th class="group-right" style="width:70px;"></th>
+            <th class="group-left" style="width:75px;">客戶編號</th>
+            <th class="group-left" style="min-width:120px;">客戶品項</th>
+            <th class="group-left" style="width:55px;">數量</th>
+            <th class="group-left" style="width:55px;">單位</th>
+            <th class="group-left group-sep" style="min-width:100px;">客戶備註</th>
+            <th class="group-right" style="min-width:130px;">正式品名</th>
+            <th class="group-right" style="width:80px;">換算數量</th>
+            <th class="group-right" style="width:70px;">換算單位</th>
+            <th class="group-right" style="min-width:120px;">備註</th>
+            <th class="group-right" style="min-width:90px;">狀態</th>
+            <th class="group-right" style="width:60px;"></th>
           </tr>
         </thead>
         <tbody id="result-body"></tbody>
