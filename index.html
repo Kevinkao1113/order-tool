@@ -101,6 +101,8 @@ tr.warn-row td.orig { background: #fdecea; }
   padding: 2px 7px; border-radius: 5px; white-space: nowrap;
 }
 .badge-ok { background: #d4edda; color: #155724; }
+.badge-corrected { background: #e8f4ff; color: #0c4a8a; cursor:pointer; }
+.badge-corrected:hover { background: #d0e8ff; }
 .badge-warn { background: #fde8e8; color: #a32d2d; }
 .badge-converted { background: #e8f4ff; color: #0c4a8a; font-size: 10px; }
 .converted-val { font-weight: 600; color: #1a1a1a; }
@@ -909,8 +911,9 @@ function renderResults(results, productMap, notesMap) {
     if(hasNoteConflict) reviewReasons.push('備註待確認');
     if(unitInvalid) reviewReasons.push(`單位「${conv.displayUnit}」不在允許範圍`);
 
+    const rowId = `row-${i}`;
     const statusHtml = finalNeedsReview
-      ? `<span class="badge badge-warn">⚠ 請確認</span>`
+      ? `<span class="badge badge-warn" onclick="markCorrected(this)" title="點擊標記為已校正" style="cursor:pointer;">⚠ 請確認</span>`
       : `<span class="badge badge-ok">✓</span>`;
     const reasonHtml = reviewReasons.length
       ? `<div style="font-size:10px;color:#a32d2d;margin-top:3px;line-height:1.4;">${reviewReasons.map(s=>`・${escHtml(s)}`).join('<br>')}</div>` : '';
@@ -1208,8 +1211,9 @@ async function uploadToSheet() {
   const rows = document.querySelectorAll('#result-body tr');
   if(!rows.length) { alert('沒有解析結果可上傳'); return; }
 
-  const orderDate = document.getElementById('order-date').value;
-  if(!orderDate) { alert('請先設定訂單日期'); return; }
+  const rawDate = document.getElementById('order-date').value;
+  if(!rawDate) { alert('請先設定訂單日期'); return; }
+  const orderDate = formatDateForSheet(rawDate);
 
   const btn = document.getElementById('upload-sheet-btn');
   const statusEl = document.getElementById('upload-status');
@@ -1266,6 +1270,32 @@ function showToast(msg, isError=false) {
   void el.offsetWidth;
   el.classList.add('show');
   setTimeout(() => { el.classList.remove('show'); }, 3000);
+}
+
+
+// ── MARK CORRECTED ──
+function markCorrected(badge) {
+  const tr = badge.closest('tr');
+  badge.className = 'badge badge-corrected';
+  badge.textContent = '✓ 已校正';
+  badge.onclick = () => unmarkCorrected(badge);
+  badge.title = '點擊取消校正標記';
+  // 移除紅色背景
+  tr.classList.remove('warn-row');
+  tr.querySelectorAll('td').forEach(td => {
+    td.style.background = '#f0f8f0';
+  });
+}
+function unmarkCorrected(badge) {
+  const tr = badge.closest('tr');
+  badge.className = 'badge badge-warn';
+  badge.textContent = '⚠ 請確認';
+  badge.onclick = () => markCorrected(badge);
+  badge.title = '點擊標記為已校正';
+  tr.classList.add('warn-row');
+  tr.querySelectorAll('td').forEach(td => {
+    td.style.background = '';
+  });
 }
 
 // ── RESET ──
