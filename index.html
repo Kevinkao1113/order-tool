@@ -350,7 +350,7 @@ td.orig .inline-edit { color: #444; font-size: 14px; }
         <thead>
           <tr>
             <th colspan="5" class="group-label left">原始訂單資訊</th>
-            <th colspan="6" class="group-label right">比對結果（可編輯）</th>
+            <th colspan="7" class="group-label right">比對結果（可編輯）</th>
           </tr>
           <tr>
             <th class="group-left" style="width:75px;">客戶編號</th>
@@ -363,6 +363,7 @@ td.orig .inline-edit { color: #444; font-size: 14px; }
             <th class="group-right" style="width:70px;">換算單位</th>
             <th class="group-right" style="min-width:120px;">備註</th>
             <th class="group-right" style="min-width:90px;">狀態</th>
+            <th class="group-right" style="width:60px;">校正</th>
             <th class="group-right" style="width:60px;"></th>
           </tr>
         </thead>
@@ -371,10 +372,7 @@ td.orig .inline-edit { color: #444; font-size: 14px; }
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:1rem;border-top:1px solid #f0f0ec;">
       <button class="btn-upload-sheet" id="upload-sheet-btn" onclick="uploadToSheet()">⬆ 上傳到訂貨單</button>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <span style="font-size:12px;color:#aaa;" id="upload-status"></span>
-        <button class="btn btn-copy" id="copy-btn-bottom" onclick="copyResults()">複製結果</button>
-      </div>
+      <span style="font-size:12px;color:#aaa;" id="upload-status"></span>
     </div>
   </div>
 
@@ -913,7 +911,7 @@ function renderResults(results, productMap, notesMap) {
 
     const rowId = `row-${i}`;
     const statusHtml = finalNeedsReview
-      ? `<span class="badge badge-warn" onclick="markCorrected(this)" title="點擊標記為已校正" style="cursor:pointer;">⚠ 請確認</span>`
+      ? `<span class="badge badge-warn">⚠ 請確認</span>`
       : `<span class="badge badge-ok">✓</span>`;
     const reasonHtml = reviewReasons.length
       ? `<div style="font-size:10px;color:#a32d2d;margin-top:3px;line-height:1.4;">${reviewReasons.map(s=>`・${escHtml(s)}`).join('<br>')}</div>` : '';
@@ -949,6 +947,11 @@ function renderResults(results, productMap, notesMap) {
         ${hasNoteConflict?`<div style="font-size:11px;color:#c0392b;font-weight:700;margin-top:2px;">⚠ 客戶本次：${escHtml(customerNote)}</div>`:''}
       </div></td>
       <td>${statusHtml}${reasonHtml}</td>
+      <td style="text-align:center;">
+        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#555;margin:0;">
+          <input type="checkbox" onchange="toggleCorrect(this)" style="width:16px;height:16px;cursor:pointer;accent-color:#2d7a4f;">
+        </label>
+      </td>
       <td><button class="btn-split" onclick="splitRow(this)" title="插入拆分列">＋ 拆分</button></td>
     `;
     if(finalNeedsReview) tr.className='warn-row';
@@ -1273,29 +1276,19 @@ function showToast(msg, isError=false) {
 }
 
 
-// ── MARK CORRECTED ──
-function markCorrected(badge) {
-  const tr = badge.closest('tr');
-  badge.className = 'badge badge-corrected';
-  badge.textContent = '✓ 已校正';
-  badge.onclick = () => unmarkCorrected(badge);
-  badge.title = '點擊取消校正標記';
-  // 移除紅色背景
-  tr.classList.remove('warn-row');
-  tr.querySelectorAll('td').forEach(td => {
-    td.style.background = '#f0f8f0';
-  });
-}
-function unmarkCorrected(badge) {
-  const tr = badge.closest('tr');
-  badge.className = 'badge badge-warn';
-  badge.textContent = '⚠ 請確認';
-  badge.onclick = () => markCorrected(badge);
-  badge.title = '點擊標記為已校正';
-  tr.classList.add('warn-row');
-  tr.querySelectorAll('td').forEach(td => {
-    td.style.background = '';
-  });
+// ── TOGGLE CORRECT ──
+function toggleCorrect(checkbox) {
+  const tr = checkbox.closest('tr');
+  if(checkbox.checked) {
+    tr.classList.remove('warn-row');
+    tr.querySelectorAll('td').forEach(td => { td.style.background = '#f0f8f0'; });
+    const badge = tr.querySelector('.badge-warn');
+    if(badge) { badge.className='badge badge-corrected'; badge.textContent='✓ 已校正'; }
+  } else {
+    tr.querySelectorAll('td').forEach(td => { td.style.background = ''; });
+    const wasWarn = tr.querySelector('.badge-corrected');
+    if(wasWarn) { wasWarn.className='badge badge-warn'; wasWarn.textContent='⚠ 請確認'; tr.classList.add('warn-row'); }
+  }
 }
 
 // ── RESET ──
